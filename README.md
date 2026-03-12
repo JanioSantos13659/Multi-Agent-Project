@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Multiagente Projeto
 
 Projeto em Python para simulação de um sistema multiagente, com agentes especializados para coordenação, tarefas e recursos.
@@ -69,3 +70,7 @@ No teste de coordenação, ao receber uma mensagem, o agente deve armazená-la e
 ## 📄 Licença
 
 Licença ainda não definida no repositório.
+=======
+# Multi-Agent-Project
+“The Multi-Agent Project builds systems of autonomous agents that collaborate to solve complex tasks, with applications in AI, robotics, and smart environments.
+>>>>>>> b2d59b9f75c3040f37a038a488286e39843c44e7
