@@ -1,58 +1,58 @@
-# Relatório Técnico — Sistema Multiagente
+# Technical Report - Multi-Agent System
 
-## 1. Objetivo
-Documentar a arquitetura e o fluxo operacional do sistema multiagente representado no diagrama, descrevendo componentes, interações e responsabilidades.
+## 1. Objective
+Document the architecture and operational flow of the multi-agent system represented in the diagram, describing components, interactions, and responsibilities.
 
-## 2. Visão Geral
-O sistema é composto por três agentes principais:
+## 2. Overview
+The system is composed of three main agents:
 
-- **AgenteTarefa**: processa demandas relacionadas a tarefas.
-- **AgenteRecurso**: processa demandas relacionadas a recursos.
-- **AgenteCoordenacao**: centraliza mensagens e consolida respostas ao usuário.
+- **TaskAgent**: processes task-related requests.
+- **ResourceAgent**: processes resource-related requests.
+- **CoordinationAgent**: centralizes messages and consolidates responses to the user.
 
-## 3. Fluxo Representado no Diagrama
-1. Inicialização dos agentes.
-2. Envio de entradas de tarefa ao **AgenteTarefa**.
-3. Retorno do processamento para o **AgenteCoordenacao**.
-4. Envio de entradas de recurso ao **AgenteRecurso**.
-5. Retorno do processamento para o **AgenteCoordenacao**.
-6. Consolidação das atualizações e resposta final ao usuário.
+## 3. Flow Represented in the Diagram
+1. Agent initialization.
+2. Task inputs are sent to the **TaskAgent**.
+3. Processing results are returned to the **CoordinationAgent**.
+4. Resource inputs are sent to the **ResourceAgent**.
+5. Processing results are returned to the **CoordinationAgent**.
+6. Updates are consolidated and the final response is sent to the user.
 
-## 4. Componentes e Responsabilidades
+## 4. Components and Responsibilities
 
-### 4.1 AgenteTarefa
-- Recebe tarefas.
-- Processa cada tarefa conforme regras de negócio.
-- Encaminha resultado ao agente de coordenação.
+### 4.1 TaskAgent
+- Receives tasks.
+- Processes each task according to business rules.
+- Forwards results to the coordination agent.
 
-### 4.2 AgenteRecurso
-- Recebe solicitações de recurso.
-- Processa disponibilidade/fornecimento.
-- Encaminha resultado ao agente de coordenação.
+### 4.2 ResourceAgent
+- Receives resource requests.
+- Processes availability/provisioning.
+- Forwards results to the coordination agent.
 
-### 4.3 AgenteCoordenacao
-- Recebe atualizações dos outros agentes.
-- Mantém histórico de mensagens.
-- Emite resposta consolidada ao usuário.
+### 4.3 CoordinationAgent
+- Receives updates from the other agents.
+- Maintains message history.
+- Produces a consolidated response for the user.
 
-## 5. Estrutura de Código Relacionada
+## 5. Related Code Structure
 
 ```text
 src/
-├─ agentes/
-│  ├─ coordenacao.py
-│  ├─ tarefa.py
-│  └─ recurso.py
-└─ main.py
+|-- agentes/
+|   |-- coordenacao.py
+|   |-- tarefa.py
+|   `-- recurso.py
+`-- main.py
 
 tests/
-├─ test_coordenacao.py
-├─ test_tarefa.py
-└─ test_recurso.py
+|-- test_coordenacao.py
+|-- test_tarefa.py
+`-- test_recurso.py
 ```
 
-## 6. Validação
-A validação do comportamento ocorre com testes automatizados (`pytest`), incluindo cenários de processamento e recebimento de mensagens entre agentes.
+## 6. Validation
+Behavior validation is performed with automated tests (`pytest`), including scenarios for processing and message exchange between agents.
 
-## 7. Conclusão
-A arquitetura apresentada no diagrama evidencia separação de responsabilidades, simplicidade de fluxo e facilidade de manutenção, sendo adequada para evolução incremental do sistema multiagente.
+## 7. Conclusion
+The architecture shown in the diagram highlights separation of responsibilities, flow simplicity, and ease of maintenance, making it suitable for incremental evolution of the multi-agent system.
