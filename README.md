@@ -1,19 +1,20 @@
-Multiagent Project
-Python project for simulating a multiagent system, with specialized agents for coordination, tasks, and resources.
+# Multi-Agent Project
 
-📌 Overview
-The project organizes responsibilities into separate agents:
+This Python project simulates a multi-agent system with specialized agents for coordination, tasks, and resources.
 
-CoordinationAgent: receives and centralizes updates/messages.
+## Overview
 
-TaskAgent: represents rules and operations related to tasks.
+The project separates responsibilities across three agents:
 
-ResourceAgent: represents rules and operations related to resources.
+- `CoordinationAgent`: receives and centralizes updates and messages.
+- `TaskAgent`: handles rules and operations related to tasks.
+- `ResourceAgent`: handles rules and operations related to resources.
 
-Behaviors are validated through automated tests using pytest.
+The system behavior is validated with automated tests using `pytest`.
 
-🧱 Project Structure
-text
+## Project Structure
+
+```text
 multiagent-project/
 ├─ src/
 │  ├─ __init__.py
@@ -28,36 +29,47 @@ multiagent-project/
 │  └─ test_resource.py
 ├─ requirements.txt
 └─ pytest.ini
-⚙️ Requirements
-Python 3.11+
+```
 
-pip
+## Requirements
 
-dependencies listed in requirements.txt
+- Python 3.11 or later
+- `pip`
+- The dependencies listed in `requirements.txt`
 
-🚀 Installation
-In the terminal (Windows/PowerShell), at the project root:
+## Installation
 
-powershell
+Run the following commands in a Windows PowerShell terminal from the project root:
+
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-✅ Running the tests
-powershell
+```
+
+## Running the Tests
+
+```powershell
 python -m pytest -q
-🧪 Example of expected behavior
-In the coordination test, when receiving a message, the agent should store it in its updates:
+```
 
+## Example Behavior
+
+In the coordination test, when the agent receives a message, it should store that message in its `updates` collection:
+
+```python
 agent.receive("Test message")
+```
 
-"Test message" should exist in agent.updates
+After that, `"Test message"` should be present in `agent.updates`.
 
-🛠️ Technologies
-Python
+## Technologies
 
-Pytest
+- Python
+- Pytest
 
-📄 License
-License not yet defined in the repository.
+## License
+
+No license has been defined in the repository yet.
 
