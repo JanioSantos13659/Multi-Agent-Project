@@ -1,76 +1,63 @@
-<<<<<<< HEAD
-# Multiagente Projeto
+Multiagent Project
+Python project for simulating a multiagent system, with specialized agents for coordination, tasks, and resources.
 
-Projeto em Python para simulação de um sistema multiagente, com agentes especializados para coordenação, tarefas e recursos.
+📌 Overview
+The project organizes responsibilities into separate agents:
 
-## 📌 Visão geral
+CoordinationAgent: receives and centralizes updates/messages.
 
-O projeto organiza responsabilidades em agentes separados:
+TaskAgent: represents rules and operations related to tasks.
 
-- **AgenteCoordenacao**: recebe e centraliza atualizações/mensagens.
-- **AgenteTarefa**: representa regras e operações relacionadas a tarefas.
-- **AgenteRecurso**: representa regras e operações relacionadas a recursos.
+ResourceAgent: represents rules and operations related to resources.
 
-Os comportamentos são validados por testes automatizados com `pytest`.
+Behaviors are validated through automated tests using pytest.
 
-## 🧱 Estrutura do projeto
-
-```text
-multiagente-projeto/
+🧱 Project Structure
+text
+multiagent-project/
 ├─ src/
 │  ├─ __init__.py
-│  └─ agentes/
+│  └─ agents/
 │     ├─ __init__.py
-│     ├─ coordenacao.py
-│     ├─ tarefa.py
-│     └─ recurso.py
+│     ├─ coordination.py
+│     ├─ task.py
+│     └─ resource.py
 ├─ tests/
-│  ├─ test_coordenacao.py
-│  ├─ test_tarefa.py
-│  └─ test_recurso.py
+│  ├─ test_coordination.py
+│  ├─ test_task.py
+│  └─ test_resource.py
 ├─ requirements.txt
 └─ pytest.ini
-```
+⚙️ Requirements
+Python 3.11+
 
-## ⚙️ Requisitos
+pip
 
-- Python 3.11+
-- pip
-- dependências em `requirements.txt`
+dependencies listed in requirements.txt
 
-## 🚀 Instalação
+🚀 Installation
+In the terminal (Windows/PowerShell), at the project root:
 
-No terminal (Windows/PowerShell), na raiz do projeto:
-
-```powershell
+powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-```
-
-## ✅ Executando os testes
-
-```powershell
+✅ Running the tests
+powershell
 python -m pytest -q
-```
+🧪 Example of expected behavior
+In the coordination test, when receiving a message, the agent should store it in its updates:
 
-## 🧪 Exemplo de comportamento esperado
+agent.receive("Test message")
 
-No teste de coordenação, ao receber uma mensagem, o agente deve armazená-la em suas atualizações:
+"Test message" should exist in agent.updates
 
-- `agente.receber("Mensagem de teste")`
-- `"Mensagem de teste"` deve existir em `agente.atualizacoes`
+🛠️ Technologies
+Python
 
-## 🛠️ Tecnologias
+Pytest
 
-- Python
-- Pytest
+📄 License
+License not yet defined in the repository.
 
-## 📄 Licença
-
-Licença ainda não definida no repositório.
-=======
-# Multi-Agent-Project
-“The Multi-Agent Project builds systems of autonomous agents that collaborate to solve complex tasks, with applications in AI, robotics, and smart environments.
->>>>>>> b2d59b9f75c3040f37a038a488286e39843c44e7

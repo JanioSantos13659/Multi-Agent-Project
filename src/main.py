@@ -1,25 +1,27 @@
-from agentes.tarefa import AgenteTarefa
-from agentes.recurso import AgenteRecurso
-from agentes.coordenacao import AgenteCoordenacao
+from agents.task import TaskAgent
+from agents.resource import ResourceAgent
+from agents.coordination import CoordinationAgent
+
 
 def main():
-    tarefa = AgenteTarefa()
-    recurso = AgenteRecurso()
-    coordenacao = AgenteCoordenacao()
+    task_agent = TaskAgent()
+    resource_agent = ResourceAgent()
+    coordination_agent = CoordinationAgent()
 
-    # Simulação de entrada do usuário
-    tarefas = ["Analisar dados", "Gerar relatório"]
-    recursos = ["CPU extra", "Memória RAM"]
+    # Simulated user input.
+    tasks = ["Analyze data", "Generate report"]
+    resources = ["Extra CPU", "RAM memory"]
 
-    for t in tarefas:
-        resultado = tarefa.processar(t)
-        coordenacao.receber(resultado)
+    for task in tasks:
+        result = task_agent.process(task)
+        coordination_agent.receive(result)
 
-    for r in recursos:
-        resultado = recurso.fornecer(r)
-        coordenacao.receber(resultado)
+    for resource in resources:
+        result = resource_agent.provide(resource)
+        coordination_agent.receive(result)
 
-    coordenacao.responder_usuario()
+    coordination_agent.respond_to_user()
+
 
 if __name__ == "__main__":
     main()
