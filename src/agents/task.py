@@ -1,16 +1,10 @@
-import time
-
+import queue
 
 class TaskAgent:
-    def process(self, task):
-        print(f"[Task] Processing: {task}")
-        time.sleep(1)
-        return f"Task '{task}' completed"
+    def __init__(self, name="TaskAgent"):
+        self.name = name
 
-    # Backward compatibility with existing Portuguese method calls.
-    def processar(self, tarefa):
-        return self.process(tarefa)
+    def act(self, task, coord_queue):
+        result = f"Task '{task}' completed"
+        coord_queue.put(result)
 
-
-# Backward compatibility with existing Portuguese class imports.
-AgenteTarefa = TaskAgent

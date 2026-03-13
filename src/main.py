@@ -1,27 +1,21 @@
+import queue
 from agents.task import TaskAgent
 from agents.resource import ResourceAgent
 from agents.coordination import CoordinationAgent
 
-
 def main():
+    coord_queue = queue.Queue()
     task_agent = TaskAgent()
     resource_agent = ResourceAgent()
-    coordination_agent = CoordinationAgent()
+    coord_agent = CoordinationAgent()
 
-    # Simulated user input.
-    tasks = ["Analyze data", "Generate report"]
-    resources = ["Extra CPU", "RAM memory"]
+    # User requests
+    task_agent.act("Analyze data", coord_queue)
+    resource_agent.act("Extra CPU", coord_queue)
 
-    for task in tasks:
-        result = task_agent.process(task)
-        coordination_agent.receive(result)
-
-    for resource in resources:
-        result = resource_agent.provide(resource)
-        coordination_agent.receive(result)
-
-    coordination_agent.respond_to_user()
-
+    # Coordination receives and responds
+    coord_agent.receive(coord_queue)
+    coord_agent.respond_user()
 
 if __name__ == "__main__":
     main()

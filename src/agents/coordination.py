@@ -1,23 +1,15 @@
 class CoordinationAgent:
-    def __init__(self):
+    def __init__(self, name="CoordinationAgent"):
+        self.name = name
         self.updates = []
 
-    def receive(self, message):
-        print(f"[Coordination] Update received: {message}")
-        self.updates.append(message)
+    def receive(self, coord_queue):
+        while not coord_queue.empty():
+            msg = coord_queue.get()
+            self.updates.append(msg)
+            print(f"[Coordination] {msg}")
 
-    def respond_to_user(self):
-        print("[Coordination] Final response to user:")
+    def respond_user(self):
+        print("Final response to user:")
         for msg in self.updates:
             print(" -", msg)
-
-    # Backward compatibility with existing Portuguese method calls.
-    def receber(self, mensagem):
-        self.receive(mensagem)
-
-    def responder_usuario(self):
-        self.respond_to_user()
-
-
-# Backward compatibility with existing Portuguese class imports.
-AgenteCoordenacao = CoordinationAgent

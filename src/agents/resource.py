@@ -1,16 +1,9 @@
-import time
-
+import queue
 
 class ResourceAgent:
-    def provide(self, resource):
-        print(f"[Resource] Providing: {resource}")
-        time.sleep(1)
-        return f"Resource '{resource}' delivered"
+    def __init__(self, name="ResourceAgent"):
+        self.name = name
 
-    # Backward compatibility with existing Portuguese method calls.
-    def fornecer(self, recurso):
-        return self.provide(recurso)
-
-
-# Backward compatibility with existing Portuguese class imports.
-AgenteRecurso = ResourceAgent
+    def act(self, resource, coord_queue):
+        result = f"Resource '{resource}' delivered"
+        coord_queue.put(result)
