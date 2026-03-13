@@ -1,13 +1,18 @@
 import queue
+from typing import Any
 
 
 class CoordinationAgent:
+    """Central agent responsible for orchestrating message flow."""
+
     def __init__(self, name="CoordinationAgent", coord_queue=None):
+        """Initialize the coordinator with a message queue and updates history."""
         self.name = name
         self.coord_queue = coord_queue or queue.Queue()
         self.updates = []
 
-    def receive(self, message_or_queue=None):
+    def receive(self, message_or_queue: Any = None) -> None:
+        """Receive either a single message or drain messages from a queue."""
         if message_or_queue is None:
             target_queue = self.coord_queue
         elif hasattr(message_or_queue, "empty") and hasattr(message_or_queue, "get"):
@@ -18,11 +23,12 @@ class CoordinationAgent:
             return
 
         while not target_queue.empty():
-            msg = target_queue.get()
-            self.updates.append(msg)
-            print(f"[Coordination] {msg}")
+            update_message = target_queue.get()
+            self.updates.append(update_message)
+            print(f"[Coordination] {update_message}")
 
-    def distribute(self, requests, task_agent, resource_agent):
+    def distribute(self, requests: list[dict[str, str]], task_agent, resource_agent) -> None:
+        """Route requests to specialized agents and collect their responses."""
         for request in requests:
             request_type = request.get("type")
             payload = request.get("payload")
@@ -34,9 +40,11 @@ class CoordinationAgent:
             else:
                 self.receive(f"Unsupported request type: {request_type}")
 
+        # Drain all produced messages after routing completes.
         self.receive(self.coord_queue)
 
-    def respond_user(self):
+    def respond_user(self) -> None:
+        """Print aggregated updates as the final user response."""
         print("Final response to user:")
-        for msg in self.updates:
-            print(" -", msg)
+        for update_message in self.updates:
+            print(" -", update_message)
