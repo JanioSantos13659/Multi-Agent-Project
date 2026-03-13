@@ -29,9 +29,13 @@ class CoordinationAgent:
 
     def distribute(self, requests: list[dict[str, str]], task_agent, resource_agent) -> None:
         """Route requests to specialized agents and collect their responses."""
-        for request in requests:
+        total_requests = len(requests)
+        print(f"[Coordination] Starting distribution of {total_requests} request(s)")
+
+        for index, request in enumerate(requests, start=1):
             request_type = request.get("type")
             payload = request.get("payload")
+            print(f"[Coordination] Routing request {index}/{total_requests}: type={request_type}")
 
             if request_type == "task":
                 task_agent.act(payload, self.coord_queue)
@@ -45,6 +49,6 @@ class CoordinationAgent:
 
     def respond_user(self) -> None:
         """Print aggregated updates as the final user response."""
-        print("Final response to user:")
+        print(f"Final response to user ({len(self.updates)} update(s)):")
         for update_message in self.updates:
             print(" -", update_message)

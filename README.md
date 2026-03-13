@@ -35,6 +35,9 @@ flowchart LR
 
 ```text
 multiagent-project/
+├─ tasks.json
+├─ data/
+│  └─ tasks_resources.json
 ├─ src/
 │  ├─ __init__.py
 │  └─ agents/
@@ -45,9 +48,10 @@ multiagent-project/
 ├─ tests/
 │  ├─ test_coordination.py
 │  ├─ test_task.py
-│  └─ test_resource.py
+│  ├─ test_resource.py
+│  └─ test_utils.py
 ├─ requirements.txt
-└─ pytest.ini
+└─ REPORT.md
 ```
 
 ## Requirements

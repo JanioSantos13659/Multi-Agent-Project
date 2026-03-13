@@ -16,7 +16,7 @@ Main implementation work:
   - `format_message()` for standardized output messages.
   - `load_dataset()` for loading `.json` and `.csv` datasets.
 - Added a simple dataset with tasks and resources:
-  - `data/tasks_resources.json`
+  - `tasks.json`
 - Expanded tests to validate:
   - Task processing behavior.
   - Resource provisioning behavior.
