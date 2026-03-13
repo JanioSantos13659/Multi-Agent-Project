@@ -1,0 +1,4 @@
+[
+  {"task": "Backup database", "resource": "Server A"},
+  {"task": "Generate report", "resource": "Server B"}
+]

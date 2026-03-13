@@ -12,6 +12,25 @@ The project separates responsibilities across three agents:
 
 The system behavior is validated with automated tests using `pytest`.
 
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+	U[External Input / Event] --> C[CoordinationAgent]
+	C --> T[TaskAgent]
+	C --> R[ResourceAgent]
+	T --> C
+	R --> C
+	C --> O[System Updates / State]
+```
+
+## Agent Interaction
+
+1. `CoordinationAgent` acts as the central orchestrator, receiving messages and updates.
+2. `TaskAgent` processes task-related decisions and reports results back to `CoordinationAgent`.
+3. `ResourceAgent` processes resource-related decisions and also reports results back to `CoordinationAgent`.
+4. `CoordinationAgent` consolidates all responses and keeps the system state updated.
+
 ## Project Structure
 
 ```text
