@@ -2,9 +2,10 @@ import queue
 from pathlib import Path
 
 from src.agents.coordination import CoordinationAgent
-from src.agents.task import TaskAgent
-from src.agents.resource import ResourceAgent
-from src.utils import load_dataset
+from src.agents.inventory import InventoryAgent
+from src.agents.quotation import QuotationAgent
+from src.agents.sales import SalesAgent
+from src.helpers.utils import load_dataset
 
 def test_coordination_agent():
     coord_queue = queue.Queue()
@@ -20,54 +21,45 @@ def test_coordination_agent():
     assert "Resource 'Y' delivered" in agent.updates
 
 
-def test_coordination_agent_distributes_messages():
-    task_agent = TaskAgent()
-    resource_agent = ResourceAgent()
-    coordination_agent = CoordinationAgent()
+def test_coordination_agent_distributes_order_to_sales_agents():
+    inventory_agent = InventoryAgent(initial_stock={"A4": 500})
+    quotation_agent = QuotationAgent(price_table={"A4": 0.5})
+    sales_agent = SalesAgent()
+    coordination_agent = CoordinationAgent(inventory_agent, quotation_agent, sales_agent)
 
-    requests = [
-        {"type": "task", "payload": "Analyze data"},
-        {"type": "resource", "payload": "Extra CPU"},
-    ]
+    order = {"client": "Empresa X", "quantity": 100, "paper_type": "A4"}
+    result = coordination_agent.distribute_order(order)
 
-    coordination_agent.distribute(requests, task_agent, resource_agent)
-
-    assert "Task 'Analyze data' completed" in coordination_agent.updates
-    assert "Resource 'Extra CPU' delivered" in coordination_agent.updates
+    assert result["status"] == "completed"
+    assert result["proposal"]["total"] == 50.0
+    assert result["transaction"]["status"] == "confirmed"
 
 
 def test_coordination_agent_simulates_dataset_driven_flow():
-    dataset_path = Path(__file__).resolve().parents[1] / "tasks.json"
+    dataset_path = Path(__file__).resolve().parents[1] / "data" / "orders.json"
     dataset = load_dataset(str(dataset_path))
 
-    requests = []
-    for item in dataset:
-        requests.append({"type": "task", "payload": item["task"]})
-        requests.append({"type": "resource", "payload": item["resource"]})
+    inventory_agent = InventoryAgent(initial_stock={"A4": 1000, "Carta": 1000})
+    quotation_agent = QuotationAgent()
+    sales_agent = SalesAgent()
+    coordination_agent = CoordinationAgent(inventory_agent, quotation_agent, sales_agent)
 
-    coordination_agent = CoordinationAgent()
-    task_agent = TaskAgent()
-    resource_agent = ResourceAgent()
+    for order in dataset:
+        coordination_agent.distribute_order(order)
 
-    coordination_agent.distribute(requests, task_agent, resource_agent)
-
-    assert "Task 'Backup database' completed" in coordination_agent.updates
-    assert "Resource 'Server A' delivered" in coordination_agent.updates
-    assert "Task 'Generate report' completed" in coordination_agent.updates
-    assert "Resource 'Server B' delivered" in coordination_agent.updates
+    assert len(sales_agent.transactions) == 2
+    assert sales_agent.transactions[0]["client"] == "Empresa X"
+    assert sales_agent.transactions[1]["client"] == "Empresa Y"
 
 
-def test_coordination_agent_handles_unsupported_request_type():
-    coordination_agent = CoordinationAgent()
-    task_agent = TaskAgent()
-    resource_agent = ResourceAgent()
+def test_coordination_agent_returns_out_of_stock_when_inventory_is_insufficient():
+    inventory_agent = InventoryAgent(initial_stock={"A4": 10})
+    quotation_agent = QuotationAgent(price_table={"A4": 1.0})
+    sales_agent = SalesAgent()
+    coordination_agent = CoordinationAgent(inventory_agent, quotation_agent, sales_agent)
 
-    requests = [
-        {"type": "task", "payload": "Prepare dashboard"},
-        {"type": "unknown", "payload": "X"},
-    ]
+    order = {"client": "Empresa X", "quantity": 100, "paper_type": "A4"}
+    result = coordination_agent.distribute_order(order)
 
-    coordination_agent.distribute(requests, task_agent, resource_agent)
-
-    assert "Task 'Prepare dashboard' completed" in coordination_agent.updates
-    assert "Unsupported request type: unknown" in coordination_agent.updates
+    assert result["status"] == "out_of_stock"
+    assert len(sales_agent.transactions) == 0

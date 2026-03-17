@@ -2,63 +2,56 @@
 
 ## What Was Done
 
-The project was evolved into a clearer multi-agent workflow with reusable helpers and stronger automated validation.
+The project was evolved into a multi-agent sales workflow that simulates operations of a paper company with reusable helpers and automated validation.
 
 Main implementation work:
 
-- Implemented and refined the central coordination flow through `CoordinationAgent`.
-- Added coordination methods to receive and distribute messages between specialized agents.
-- Implemented task-processing behavior in `TaskAgent` through `process()`.
-- Implemented resource-provision behavior in `ResourceAgent` through `provide()`.
-- Kept backward compatibility by preserving `act()` methods and delegating to the new methods.
-- Created reusable utility functions:
-  - `validate_input()` for consistent input validation.
-  - `format_message()` for standardized output messages.
-  - `load_dataset()` for loading `.json` and `.csv` datasets.
-- Added a simple dataset with tasks and resources:
-  - `tasks.json`
-- Expanded tests to validate:
-  - Task processing behavior.
-  - Resource provisioning behavior.
-  - End-to-end coordination between agents.
-  - Dataset loading and utility edge cases.
+- Implemented `InventoryAgent` to control paper stock, availability checks, stock updates, and item reservations.
+- Implemented `QuotationAgent` to calculate prices by quantity, apply discount rules, and generate sales proposals.
+- Implemented `SalesAgent` to confirm orders, register transactions, and update sale status.
+- Adjusted `CoordinationAgent` to receive customer orders and orchestrate inventory, quotation, and sales decisions.
+- Added helper utilities in `src/helpers/utils.py`:
+  - `validate_order()` for order validation.
+  - `calculate_discount()` for quantity discount policy.
+  - `format_output()` for standardized workflow messages.
+  - `load_dataset()` for order dataset loading.
+- Added a dedicated order dataset:
+  - `data/orders.json`
+- Added tests for each sales-focused agent and coordination flow.
 
 ## Difficulties
 
 The most relevant difficulties were:
 
-- Maintaining compatibility while introducing new methods (`process()` and `provide()`) without breaking the existing coordination flow based on `act()`.
-- Making tests stricter and more realistic while keeping them simple and readable.
-- Ensuring consistent validation rules and message formatting across different agents.
-- Handling tool execution interruptions in the environment (some terminal/tool calls were skipped or canceled), requiring repeated validation attempts.
+- Defining clear boundaries between the three sales agents so each one has a single responsibility.
+- Guaranteeing consistent order validation in every part of the flow.
+- Designing discount and pricing behavior simple enough for tests, but realistic for a paper sales scenario.
 
-## How the Agents Solve the Problem
+## How the Agents Simulate Paper Sales Flow
 
-The system solves the problem by splitting responsibilities into specialized agents coordinated by a central orchestrator:
+The system simulates daily paper sales by splitting responsibilities into specialized agents coordinated by a central orchestrator:
 
-- `TaskAgent` focuses only on task logic.
-- `ResourceAgent` focuses only on resource logic.
-- `CoordinationAgent` orchestrates communication and aggregates outcomes.
+- `InventoryAgent` focuses on stock accuracy and reservation safety.
+- `QuotationAgent` focuses on pricing policy and discount transparency.
+- `SalesAgent` focuses on final commercial confirmation and transaction lifecycle.
+- `CoordinationAgent` orchestrates the complete journey from request to sale completion.
 
 Typical flow:
 
-1. A request is created from user input or dataset items.
-2. `CoordinationAgent` routes task requests to `TaskAgent` and resource requests to `ResourceAgent`.
-3. Specialized agents process the request and return standardized messages.
-4. `CoordinationAgent` receives all responses and stores them in a central updates list.
-5. The consolidated system state can then be reported back to the user.
+1. A customer order arrives with client, paper type, and quantity.
+2. `CoordinationAgent` validates and distributes the order.
+3. `InventoryAgent` checks and reserves stock.
+4. `QuotationAgent` generates a proposal with subtotal, discount, and final total.
+5. `SalesAgent` confirms and records the transaction status.
+6. `CoordinationAgent` returns a consolidated result and audit trail.
 
-This architecture improves separation of concerns, testability, and maintainability.
+This architecture improves organization and transparency because each business step is explicit, traceable, and testable.
 
 ## Future Improvements
 
 Potential next steps:
 
-- Add typed request/response models (for example with dataclasses or Pydantic) to reduce dictionary errors.
-- Add structured logging with log levels and trace IDs for better observability.
-- Add retry and fallback strategies for failed agent operations.
-- Add asynchronous processing (`asyncio`) for larger workloads.
-- Add performance and load tests for bigger datasets.
-- Add integration tests that execute the full pipeline from dataset loading to final coordination output.
-- Add configuration management (environment-based settings) for production readiness.
-- Add result persistence (database or file-based history) for auditability.
+- Add customer-specific pricing rules and contract-based discount tiers.
+- Persist transactions to a database for full commercial history.
+- Include invoice generation and payment tracking status transitions.
+- Add dashboards for stock visibility and quotation conversion rate.

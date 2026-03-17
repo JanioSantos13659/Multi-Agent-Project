@@ -1,15 +1,23 @@
 import queue
 from typing import Any
 
+try:
+    from src.helpers.utils import format_output, validate_order
+except ModuleNotFoundError:
+    from helpers.utils import format_output, validate_order
+
 
 class CoordinationAgent:
-    """Central agent responsible for orchestrating message flow."""
+    """Central agent responsible for orchestrating paper sales flow."""
 
-    def __init__(self, name="CoordinationAgent", coord_queue=None):
+    def __init__(self, inventory_agent=None, quotation_agent=None, sales_agent=None, name="CoordinationAgent", coord_queue=None):
         """Initialize the coordinator with a message queue and updates history."""
         self.name = name
         self.coord_queue = coord_queue or queue.Queue()
         self.updates = []
+        self.inventory_agent = inventory_agent
+        self.quotation_agent = quotation_agent
+        self.sales_agent = sales_agent
 
     def receive(self, message_or_queue: Any = None) -> None:
         """Receive either a single message or drain messages from a queue."""
@@ -27,25 +35,50 @@ class CoordinationAgent:
             self.updates.append(update_message)
             print(f"[Coordination] {update_message}")
 
-    def distribute(self, requests: list[dict[str, str]], task_agent, resource_agent) -> None:
-        """Route requests to specialized agents and collect their responses."""
-        total_requests = len(requests)
-        print(f"[Coordination] Starting distribution of {total_requests} request(s)")
+    def receive_customer_order(self, order: dict[str, Any]) -> dict[str, Any]:
+        """Validate and store an incoming customer order."""
+        valid_order = validate_order(order)
+        self.receive(format_output("Order received", valid_order))
+        return valid_order
 
-        for index, request in enumerate(requests, start=1):
-            request_type = request.get("type")
-            payload = request.get("payload")
-            print(f"[Coordination] Routing request {index}/{total_requests}: type={request_type}")
+    def distribute_order(self, order: dict[str, Any]) -> dict[str, Any]:
+        """Distribute order handling across inventory, quotation, and sales agents."""
+        if not self.inventory_agent or not self.quotation_agent or not self.sales_agent:
+            raise ValueError("inventory_agent, quotation_agent and sales_agent are required")
 
-            if request_type == "task":
-                task_agent.act(payload, self.coord_queue)
-            elif request_type == "resource":
-                resource_agent.act(payload, self.coord_queue)
-            else:
-                self.receive(f"Unsupported request type: {request_type}")
+        valid_order = self.receive_customer_order(order)
+        reserved = self.inventory_agent.reserve_items(valid_order)
 
-        # Drain all produced messages after routing completes.
-        self.receive(self.coord_queue)
+        if not reserved:
+            message = format_output("Order status", "out_of_stock")
+            self.receive(message)
+            return {
+                "status": "out_of_stock",
+                "order": valid_order,
+            }
+
+        proposal = self.quotation_agent.generate_proposal(valid_order)
+        self.receive(format_output("Proposal generated", proposal))
+
+        confirmed = self.sales_agent.confirm_order(reserved)
+        if not confirmed:
+            message = format_output("Order status", "not_confirmed")
+            self.receive(message)
+            return {
+                "status": "not_confirmed",
+                "order": valid_order,
+                "proposal": proposal,
+            }
+
+        transaction = self.sales_agent.register_transaction(proposal)
+        self.receive(format_output("Sale finalized", transaction))
+
+        return {
+            "status": "completed",
+            "order": valid_order,
+            "proposal": proposal,
+            "transaction": transaction,
+        }
 
     def respond_user(self) -> None:
         """Print aggregated updates as the final user response."""

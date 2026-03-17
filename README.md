@@ -1,14 +1,15 @@
 # Multi-Agent Project
 
-This Python project simulates a multi-agent system with specialized agents for coordination, tasks, and resources.
+This Python project simulates a multi-agent sales system for a paper company, with specialized agents responsible for stock, pricing, and order closure.
 
 ## Overview
 
-The project separates responsibilities across three agents:
+The project separates responsibilities across sales-focused agents:
 
-- `CoordinationAgent`: receives and centralizes updates and messages.
-- `TaskAgent`: handles rules and operations related to tasks.
-- `ResourceAgent`: handles rules and operations related to resources.
+- `CoordinationAgent`: receives customer orders and orchestrates the sales workflow.
+- `InventoryAgent`: manages paper stock, checks availability, and reserves items.
+- `QuotationAgent`: calculates price, applies discounts, and generates proposals.
+- `SalesAgent`: confirms the sale, registers transactions, and updates sale status.
 
 The system behavior is validated with automated tests using `pytest`.
 
@@ -16,20 +17,23 @@ The system behavior is validated with automated tests using `pytest`.
 
 ```mermaid
 flowchart LR
-	U[External Input / Event] --> C[CoordinationAgent]
-	C --> T[TaskAgent]
-	C --> R[ResourceAgent]
-	T --> C
-	R --> C
-	C --> O[System Updates / State]
+	U[Pedido do Cliente] --> C[CoordinationAgent]
+	C --> I[InventoryAgent]
+	C --> Q[QuotationAgent]
+	C --> S[SalesAgent]
+	I --> C
+	Q --> C
+	S --> C
+	C --> O[Status da Venda e Transparencia]
 ```
 
 ## Agent Interaction
 
-1. `CoordinationAgent` acts as the central orchestrator, receiving messages and updates.
-2. `TaskAgent` processes task-related decisions and reports results back to `CoordinationAgent`.
-3. `ResourceAgent` processes resource-related decisions and also reports results back to `CoordinationAgent`.
-4. `CoordinationAgent` consolidates all responses and keeps the system state updated.
+1. `CoordinationAgent` receives the customer order and validates order data.
+2. `InventoryAgent` checks stock availability and reserves paper items.
+3. `QuotationAgent` calculates subtotal, applies discount rules, and generates the proposal.
+4. `SalesAgent` confirms the order, records the transaction, and tracks sale status.
+5. `CoordinationAgent` consolidates all updates and returns the final sales outcome.
 
 ## Project Structure
 
@@ -37,16 +41,23 @@ flowchart LR
 multiagent-project/
 ├─ tasks.json
 ├─ data/
-│  └─ tasks_resources.json
+│  ├─ tasks_resources.json
+│  └─ orders.json
 ├─ src/
-│  ├─ __init__.py
+│  ├─ helpers/
+│  │  └─ utils.py
 │  └─ agents/
-│     ├─ __init__.py
 │     ├─ coordination.py
+│     ├─ inventory.py
+│     ├─ quotation.py
+│     ├─ sales.py
 │     ├─ task.py
 │     └─ resource.py
 ├─ tests/
 │  ├─ test_coordination.py
+│  ├─ test_inventory.py
+│  ├─ test_quotation.py
+│  ├─ test_sales.py
 │  ├─ test_task.py
 │  ├─ test_resource.py
 │  └─ test_utils.py
@@ -79,13 +90,15 @@ python -m pytest -q
 
 ## Example Behavior
 
-In the coordination test, when the agent receives a message, it should store that message in its `updates` collection:
+In the sales flow, when an order arrives, `CoordinationAgent` routes it through inventory, quotation, and sales confirmation:
 
 ```python
-agent.receive("Test message")
+result = coordination_agent.distribute_order(
+	{"client": "Empresa X", "quantity": 100, "paper_type": "A4"}
+)
 ```
 
-After that, `"Test message"` should be present in `agent.updates`.
+After processing, the order result contains the proposal and transaction status.
 
 ## Technologies
 

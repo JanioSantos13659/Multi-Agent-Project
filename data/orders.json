@@ -1,0 +1,4 @@
+[
+  {"client": "Empresa X", "quantity": 100, "paper_type": "A4"},
+  {"client": "Empresa Y", "quantity": 250, "paper_type": "Carta"}
+]
